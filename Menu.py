@@ -126,13 +126,13 @@ h1, h2, h3 {{
     flex-shrink: 0;
 }}
 .app-header .brand-name {{
-    font-size: 17px;
+    font-size: 25px;
     font-weight: 700;
     color: {TEXT_PRIMARY};
     letter-spacing: -0.2px;
 }}
 .app-header .brand-sub {{
-    font-size: 12.5px;
+    font-size: 17px;
     color: {TEXT_SECONDARY};
     margin-top: 2px;
 }}
@@ -393,7 +393,7 @@ render_html("""
 # ==========================================================
 # OBJECTIFS DU PROJET (bandeau statique en séquence)
 # ==========================================================
-section_title("🧭", "Objectifs du projet")
+section_title("", "Objectifs du projet")
 
 objectifs = [
     ("01", "Collecte intelligente des données", "Centralisation et structuration des informations étudiantes.", ACCENT),
@@ -419,7 +419,7 @@ render_html("".join(obj_parts))
 # ==========================================================
 # KPI
 # ==========================================================
-section_title("📊", "Indicateurs globaux")
+section_title("", "Indicateurs globaux")
 
 nb_etudiants = len(df)
 moyenne_gen = round(df["moyenne"].mean(), 2)
@@ -446,41 +446,13 @@ kpi_parts.append("</div>")
 render_html("".join(kpi_parts))
 
 
-# ==========================================================
-# INSIGHTS AUTOMATIQUES
-# ==========================================================
-section_title("🧠", "Insights automatiques")
 
-best = df.groupby("filiere")["moyenne"].mean().idxmax()
-worst = df.groupby("filiere")["moyenne"].mean().idxmin()
-stress_high = df.groupby("filiere")["stress"].mean().idxmax()
-study_high = df.groupby("filiere")["heures_etude"].mean().idxmax()
-motivation_high = df.groupby("filiere")["motivation"].mean().idxmax()
-
-insights = [
-    ("Meilleure filière", best, TEAL),
-    ("Filière la moins performante", worst, CORAL),
-    ("Nombre total de filières", str(df["filiere"].nunique()), ACCENT),
-    ("Filière la plus stressée", stress_high, AMBER),
-    ("Filière la plus travailleuse", study_high, ACCENT),
-    ("Filière la plus motivée", motivation_high, TEAL),
-]
-
-cols = st.columns(3)
-for i, (label, value, color) in enumerate(insights):
-    with cols[i % 3]:
-        render_html(f"""
-        <div class="panel" style="margin-bottom:12px;">
-            <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
-            <div style="font-size:16px; font-weight:600; color:{color}; margin-top:6px;">{value}</div>
-        </div>
-        """)
 
 
 # ==========================================================
 # PERFORMANCE GLOBALE
 # ==========================================================
-section_title("📈", "Performance académique globale")
+section_title("", "Performance académique globale")
 
 pass_rate = (df["moyenne"] >= 10).mean() * 100
 fail_rate = 100 - pass_rate
@@ -505,7 +477,7 @@ with col2:
 # ==========================================================
 # TOP ÉTUDIANTS
 # ==========================================================
-section_title("🏆", "Top 10 des étudiants")
+section_title("", "Top 10 des étudiants")
 
 top_students = df.sort_values("moyenne", ascending=False).head(10)
 
@@ -523,7 +495,7 @@ st.dataframe(
 # ==========================================================
 # DISTRIBUTION DES MOYENNES
 # ==========================================================
-section_title("📊", "Distribution des performances")
+section_title("", "Distribution des performances")
 
 fig_distribution = px.histogram(
     df, x="moyenne", nbins=20,
@@ -536,7 +508,7 @@ st.plotly_chart(style_chart(fig_distribution, 420), use_container_width=True)
 # ==========================================================
 # PERFORMANCE PAR FILIÈRE
 # ==========================================================
-section_title("🏫", "Performance moyenne par filière")
+section_title("", "Performance moyenne par filière")
 
 mean_by_filiere = df.groupby("filiere")["moyenne"].mean().reset_index()
 fig_filiere = px.bar(
@@ -550,7 +522,7 @@ st.plotly_chart(style_chart(fig_filiere, 420), use_container_width=True)
 # ==========================================================
 # FACTEURS D'IMPACT
 # ==========================================================
-section_title("📉", "Facteurs influençant la réussite")
+section_title("", "Facteurs influençant la réussite")
 
 correlation = df.select_dtypes(include="number").corr()["moyenne"].sort_values()
 fig_corr = px.bar(correlation, title="Corrélation des variables avec la moyenne")
@@ -560,7 +532,7 @@ st.plotly_chart(style_chart(fig_corr, 520), use_container_width=True)
 # ==========================================================
 # HEURES D'ÉTUDE VS MOYENNE
 # ==========================================================
-section_title("📚", "Relation entre étude et performance")
+section_title("", "Relation entre étude et performance")
 
 fig_scatter = px.scatter(
     df, x="heures_etude", y="moyenne", color="filiere", size="motivation",
@@ -572,7 +544,7 @@ st.plotly_chart(style_chart(fig_scatter, 520), use_container_width=True)
 # ==========================================================
 # STRESS VS PERFORMANCE
 # ==========================================================
-section_title("😰", "Impact du stress sur les résultats")
+section_title("", "Impact du stress sur les résultats")
 
 fig_stress = px.box(df, x="stress", y="moyenne", title="Influence du niveau de stress")
 st.plotly_chart(style_chart(fig_stress, 460), use_container_width=True)
@@ -581,7 +553,7 @@ st.plotly_chart(style_chart(fig_stress, 460), use_container_width=True)
 # ==========================================================
 # PROFIL ÉTUDIANT IDÉAL
 # ==========================================================
-section_title("🌟", "Profil étudiant idéal")
+section_title("", "Profil étudiant idéal")
 
 best_student = df.sort_values("moyenne", ascending=False).iloc[0]
 
@@ -615,7 +587,7 @@ with col2:
 # ==========================================================
 # RECOMMANDATIONS IA
 # ==========================================================
-section_title("🤖", "Assistant d'aide à la décision")
+section_title("", "Assistant d'aide à la décision")
 
 recommandations = []
 
