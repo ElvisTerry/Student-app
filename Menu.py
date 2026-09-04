@@ -78,6 +78,7 @@ render_html(f"""
 
 html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
+    font-size : 20 px;
 }}
 
 .stApp {{
@@ -162,9 +163,9 @@ h1, h2, h3 {{
     gap: 10px;
     margin: 30px 0 14px 0;
 }}
-.section-title .icon {{ font-size: 15px; opacity: .9; }}
+.section-title .icon {{ font-size: 20px; opacity: .9; }}
 .section-title .label {{
-    font-size: 14.5px;
+    font-size: 20px;
     font-weight: 600;
     color: {TEXT_PRIMARY};
 }}
@@ -196,13 +197,13 @@ h1, h2, h3 {{
     padding: 16px 18px;
 }}
 .kpi .kpi-label {{
-    font-size: 12px;
+    font-size: 15px;
     color: {TEXT_SECONDARY};
     margin-bottom: 8px;
 }}
 .kpi .kpi-value {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 600;
     color: {TEXT_PRIMARY};
 }}
@@ -234,19 +235,19 @@ h1, h2, h3 {{
 }}
 .obj .obj-num {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 15px;
     color: {TEXT_SECONDARY};
     margin-bottom: 8px;
 }}
 .obj .obj-title {{
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 600;
     color: {TEXT_PRIMARY};
     margin-bottom: 6px;
     line-height: 1.3;
 }}
 .obj .obj-desc {{
-    font-size: 12px;
+    font-size: 15px;
     color: {TEXT_SECONDARY};
     line-height: 1.5;
 }}
@@ -268,7 +269,7 @@ h1, h2, h3 {{
     justify-content: space-between;
     padding: 9px 0;
     border-bottom: 1px solid {BORDER};
-    font-size: 13px;
+    font-size: 16px;
 }}
 .spec-row:last-child {{ border-bottom: none; }}
 .spec-row .k {{ color: {TEXT_SECONDARY}; }}
@@ -306,12 +307,12 @@ h1, h2, h3 {{
     border-radius: 10px;
     padding: 11px 16px;
     margin-bottom: 8px;
-    font-size: 13px;
+    font-size: 16px;
     color: {TEXT_PRIMARY};
 }}
 .action-row .idx {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 14px;
     color: {TEXT_SECONDARY};
     width: 18px;
 }}
@@ -324,7 +325,7 @@ h1, h2, h3 {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 15px;
     color: {TEXT_SECONDARY};
     flex-wrap: wrap;
     gap: 6px;
@@ -381,7 +382,7 @@ render_html("""
         <div class="brand-mark">🎓</div>
         <div>
             <div class="brand-name">SmartStudent Analytics</div>
-            <div class="brand-sub">Analyse des performances académiques — Data Science &amp; IA</div>
+            <div class="brand-sub">Analyse des performances académiques - Data analysis; IA</div>
         </div>
     </div>
     <div class="status"><span class="dot"></span>Données synchronisées</div>
@@ -655,62 +656,6 @@ for tag, color, text in recommandations:
     """)
 
 
-# ==========================================================
-# PLAN D'ACTION
-# ==========================================================
-section_title("🚀", "Plan d'amélioration recommandé")
-
-actions = [
-    "Augmenter le temps moyen consacré aux études.",
-    "Développer des stratégies de gestion du stress.",
-    "Renforcer la régularité académique.",
-    "Encourager un meilleur équilibre sommeil/travail.",
-    "Favoriser les activités physiques et sportives.",
-]
-
-for i, action in enumerate(actions, start=1):
-    render_html(f"""
-    <div class="action-row">
-        <span class="idx">{i:02d}</span>
-        <span>{action}</span>
-    </div>
-    """)
 
 
-# ==========================================================
-# RÉSUMÉ GLOBAL
-# ==========================================================
-section_title("📋", "Résumé global")
-
-summary = [
-    ("Âge moyen", f"{df['age'].mean():.1f} ans"),
-    ("Crédits moyens", f"{df['credits'].mean():.1f}"),
-    ("Motivation moyenne", f"{df['motivation'].mean():.1f}/10"),
-]
-
-cols = st.columns(3)
-for i, (label, value) in enumerate(summary):
-    with cols[i]:
-        render_html(f"""
-        <div class="panel" style="text-align:center;">
-            <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; margin-top:8px;">{value}</div>
-        </div>
-        """)
-
-
-# ==========================================================
-# PIED DE PAGE (léger, non dupliqué)
-# ==========================================================
-render_html(f"""
-<div class="app-footer">
-    <span>SmartStudent Analytics — Data Science · Machine Learning · Analytics</span>
-    <span>{nb_etudiants} étudiants suivis</span>
-</div>
-""")
-
-st.info(
-    "⬅️ Utilisez le menu latéral pour remplir le formulaire "
-    "et naviguer dans l'application."
-)
 
