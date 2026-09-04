@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import streamlit.components.v1 as components
 
 # ==========================================================
 # CONFIGURATION PAGE
@@ -14,117 +13,307 @@ st.set_page_config(
 )
 
 # ==========================================================
-# STYLE GLOBAL — THÈME SOMBRE (compatible fond dark de Streamlit)
+# PALETTE / TOKENS
 # ==========================================================
-st.markdown("""
+BG = "#0A0B0E"
+SURFACE = "#131418"
+BORDER = "#22242B"
+TEXT_PRIMARY = "#EDEEF0"
+TEXT_SECONDARY = "#888B94"
+ACCENT = "#6C8EF5"
+TEAL = "#3FD7B8"
+AMBER = "#F0B457"
+CORAL = "#F0716E"
+PURPLE = "#B08CF0"
+
+CHART_COLORWAY = [ACCENT, TEAL, AMBER, CORAL, PURPLE, "#5AB7E8"]
+
+# ==========================================================
+# STYLE GLOBAL — THÈME SOMBRE, TERMINAL D'ANALYSE
+# ==========================================================
+st.markdown(f"""
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-html, body, [class*="css"] {
+html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
-}
+}}
 
-/* Fond global : on garde le dark natif de Streamlit, on ajoute juste
-   une légère profondeur avec des halos discrets (plus de fond clair) */
-.stApp {
-    background:
-        radial-gradient(circle at top left, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.10) 0%, transparent 40%),
-        #0E1117;
-}
+.stApp {{
+    background: {BG};
+}}
 
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0B0E14, #151923);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
+section[data-testid="stSidebar"] {{
+    background: #0D0E12;
+    border-right: 1px solid {BORDER};
+}}
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-thumb {
-    background: #6366F1;
-    border-radius: 20px;
-}
+::-webkit-scrollbar {{ width: 8px; }}
+::-webkit-scrollbar-thumb {{ background: {BORDER}; border-radius: 20px; }}
 
-/* Titres */
-h1, h2, h3 {
-    color: #F1F5F9 !important;
-    font-weight: 800 !important;
-}
+/* Neutralise les gros titres Markdown par défaut de Streamlit */
+h1, h2, h3 {{
+    color: {TEXT_PRIMARY} !important;
+}}
 
-/* Cards "glass" en version sombre */
-.glass-card {
-    background: rgba(30, 35, 48, 0.65);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 22px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
-    color: #E2E8F0;
-}
-
-/* KPI cards */
-.kpi-card {
-    background: linear-gradient(135deg, rgba(30, 35, 48, 0.9), rgba(20, 24, 34, 0.85));
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 22px;
-    padding: 24px 18px;
-    text-align: center;
-    transition: 0.3s;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-}
-.kpi-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.30);
-    border-color: rgba(99, 102, 241, 0.4);
-}
-.kpi-icon {
-    font-size: 28px;
+/* ---------- En-tête d'application ---------- */
+.app-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px;
+    border: 1px solid {BORDER};
+    border-radius: 14px;
+    background: {SURFACE};
     margin-bottom: 8px;
-}
-.kpi-number {
-    font-size: 30px;
-    font-weight: 900;
-    color: #F8FAFC;
-}
-.kpi-label {
-    color: #94A3B8;
-    font-size: 13px;
-}
+}}
+.app-header .brand {{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}}
+.app-header .brand-mark {{
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, {ACCENT}, {PURPLE});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}}
+.app-header .brand-name {{
+    font-size: 17px;
+    font-weight: 700;
+    color: {TEXT_PRIMARY};
+    letter-spacing: -0.2px;
+}}
+.app-header .brand-sub {{
+    font-size: 12.5px;
+    color: {TEXT_SECONDARY};
+    margin-top: 2px;
+}}
+.app-header .status {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: {TEAL};
+    border: 1px solid {BORDER};
+    padding: 6px 12px;
+    border-radius: 999px;
+}}
+.app-header .status .dot {{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: {TEAL};
+    box-shadow: 0 0 0 3px rgba(63,215,184,.15);
+}}
 
-/* Tableaux */
-[data-testid="stDataFrame"] {
-    border-radius: 20px;
+/* ---------- Titres de section ---------- */
+.section-title {{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 30px 0 14px 0;
+}}
+.section-title .icon {{ font-size: 15px; opacity: .9; }}
+.section-title .label {{
+    font-size: 14.5px;
+    font-weight: 600;
+    color: {TEXT_PRIMARY};
+}}
+.section-title .rule {{
+    flex: 1;
+    height: 1px;
+    background: {BORDER};
+}}
+
+/* ---------- Cartes génériques (bordure fine, pas de "glass") ---------- */
+.panel {{
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: {TEXT_PRIMARY};
+}}
+
+/* ---------- KPI ---------- */
+.kpi-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }}
+.kpi {{
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-radius: 12px;
+    padding: 16px 18px;
+}}
+.kpi .kpi-label {{
+    font-size: 12px;
+    color: {TEXT_SECONDARY};
+    margin-bottom: 8px;
+}}
+.kpi .kpi-value {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    color: {TEXT_PRIMARY};
+}}
+.kpi .kpi-bar {{
+    height: 3px;
+    border-radius: 3px;
+    margin-top: 12px;
+    background: {BORDER};
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
+}}
+.kpi .kpi-bar span {{ display: block; height: 100%; border-radius: 3px; }}
 
-/* Alertes Streamlit */
-.stSuccess, .stInfo, .stWarning, .stError {
-    border-radius: 18px !important;
-}
+/* ---------- Bandeau objectifs (séquence 01-05, statique) ---------- */
+.obj-row {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }}
+.obj {{
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-left: 2px solid var(--accent, #6C8EF5);
+    border-radius: 10px;
+    padding: 14px 16px;
+}}
+.obj .obj-num {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: {TEXT_SECONDARY};
+    margin-bottom: 8px;
+}}
+.obj .obj-title {{
+    font-size: 13px;
+    font-weight: 600;
+    color: {TEXT_PRIMARY};
+    margin-bottom: 6px;
+    line-height: 1.3;
+}}
+.obj .obj-desc {{
+    font-size: 12px;
+    color: {TEXT_SECONDARY};
+    line-height: 1.5;
+}}
 
-/* Divider */
-hr {
-    margin-top: 35px !important;
-    margin-bottom: 35px !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-}
+/* ---------- Métriques doubles (réussite / échec) ---------- */
+.metric-big {{ text-align: left; }}
+.metric-big .metric-label {{ font-size: 12.5px; color: {TEXT_SECONDARY}; }}
+.metric-big .metric-value {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 34px;
+    font-weight: 600;
+    margin-top: 8px;
+}}
 
-/* Texte à l'intérieur des glass-card (titres, paragraphes) */
-.glass-card h3, .glass-card h4 {
-    color: #F1F5F9 !important;
-}
-.glass-card p, .glass-card b {
-    color: #CBD5E1;
-}
+/* ---------- Fiche profil ---------- */
+.spec-list {{ margin-top: 4px; }}
+.spec-row {{
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid {BORDER};
+    font-size: 13px;
+}}
+.spec-row:last-child {{ border-bottom: none; }}
+.spec-row .k {{ color: {TEXT_SECONDARY}; }}
+.spec-row .v {{ color: {TEXT_PRIMARY}; font-family: 'IBM Plex Mono', monospace; }}
+
+/* ---------- Recommandations & actions ---------- */
+.reco {{
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-left: 3px solid var(--c, {ACCENT});
+    border-radius: 10px;
+    padding: 13px 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: {TEXT_PRIMARY};
+    line-height: 1.5;
+}}
+.reco .tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--c, {ACCENT});
+    white-space: nowrap;
+    padding-top: 1px;
+}}
+
+.action-row {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-radius: 10px;
+    padding: 11px 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: {TEXT_PRIMARY};
+}}
+.action-row .idx {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: {TEXT_SECONDARY};
+    width: 18px;
+}}
+
+/* ---------- Footer ---------- */
+.app-footer {{
+    margin-top: 36px;
+    padding: 16px 4px 4px 4px;
+    border-top: 1px solid {BORDER};
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: {TEXT_SECONDARY};
+}}
+
+/* ---------- Table & alertes Streamlit ---------- */
+[data-testid="stDataFrame"] {{
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid {BORDER};
+}}
+.stSuccess, .stInfo, .stWarning, .stError {{ border-radius: 10px !important; }}
+hr {{ border-color: {BORDER} !important; margin: 26px 0 !important; }}
 
 </style>
 """, unsafe_allow_html=True)
+
+
+def section_title(icon: str, label: str):
+    st.markdown(f"""
+    <div class="section-title">
+        <span class="icon">{icon}</span>
+        <span class="label">{label}</span>
+        <span class="rule"></span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def style_chart(fig, height=420):
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color=TEXT_SECONDARY, size=12),
+        title_font=dict(family="Inter", size=14, color=TEXT_PRIMARY),
+        title_x=0.0,
+        height=height,
+        margin=dict(t=50, l=10, r=10, b=10),
+        colorway=CHART_COLORWAY,
+        legend=dict(bgcolor="rgba(0,0,0,0)"),
+    )
+    fig.update_xaxes(gridcolor=BORDER, zerolinecolor=BORDER)
+    fig.update_yaxes(gridcolor=BORDER, zerolinecolor=BORDER)
+    return fig
 
 
 # ==========================================================
@@ -146,221 +335,82 @@ except Exception:
 
 
 # ==========================================================
-# HEADER PREMIUM STYLE LMS
+# EN-TÊTE (une seule fois)
 # ==========================================================
-components.html("""
-<div style="
-    background: linear-gradient(135deg, #0F172A, #1E1B4B, #312E81);
-    padding: 40px;
-    border-radius: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.35);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,.08);
-">
-    <div style="
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        background: rgba(255,255,255,.04);
-        border-radius: 50%;
-        top: -120px;
-        right: -80px;
-    "></div>
-
-    <div style="
-        position: absolute;
-        width: 220px;
-        height: 220px;
-        background: rgba(99,102,241,.15);
-        border-radius: 50%;
-        bottom: -100px;
-        left: -60px;
-    "></div>
-
-    <div style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        position: relative;
-        z-index: 10;
-    ">
-        <div style="font-size: 58px;">🎓</div>
-
+st.markdown("""
+<div class="app-header">
+    <div class="brand">
+        <div class="brand-mark">🎓</div>
         <div>
-            <div style="
-                font-size: 34px;
-                font-weight: 900;
-                color: white;
-                letter-spacing: -1px;
-            ">
-                SmartStudent Analytics
-            </div>
-
-            <div style="
-                margin-top: 8px;
-                font-size: 15px;
-                color: #CBD5E1;
-            ">
-                Plateforme intelligente d'analyse des performances académiques
-                basée sur la Data Science et l'Intelligence Artificielle
-            </div>
-
-            <div style="
-                margin-top: 18px;
-                display: inline-block;
-                padding: 8px 18px;
-                border-radius: 999px;
-                background: rgba(99,102,241,.18);
-                color: #C7D2FE;
-                font-size: 13px;
-                border: 1px solid rgba(255,255,255,.12);
-            ">
-                AI • Machine Learning • Predictive Analytics
-            </div>
+            <div class="brand-name">SmartStudent Analytics</div>
+            <div class="brand-sub">Analyse des performances académiques — Data Science &amp; IA</div>
         </div>
     </div>
+    <div class="status"><span class="dot"></span>Données synchronisées</div>
 </div>
-""", height=230)
-
-st.divider()
+""", unsafe_allow_html=True)
 
 
 # ==========================================================
-# OBJECTIFS
+# OBJECTIFS DU PROJET (bandeau statique en séquence)
 # ==========================================================
-st.markdown("## 🧭 Objectifs du projet")
+section_title("🧭", "Objectifs du projet")
 
-st.components.v1.html("""
-<style>
-.container {
-    position: relative;
-    height: 120px;
-}
-.objective {
-    position: absolute;
-    width: 100%;
-    opacity: 0;
-    transition: .8s;
-    transform: translateY(12px);
-    padding: 20px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, rgba(30,35,48,.92), rgba(20,24,34,.88));
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-}
-.objective.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-.title {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
-.desc {
-    color: #94A3B8;
-    font-size: 14px;
-}
-</style>
+objectifs = [
+    ("01", "Collecte intelligente des données", "Centralisation et structuration des informations étudiantes.", ACCENT),
+    ("02", "Analyse comportementale", "Étude des performances et des habitudes académiques.", TEAL),
+    ("03", "Facteurs de réussite", "Détection automatique des variables influentes.", PURPLE),
+    ("04", "Prédiction des performances", "Utilisation de modèles IA pour anticiper les résultats.", CORAL),
+    ("05", "Rapports intelligents", "Génération d'insights décisionnels automatisés.", AMBER),
+]
 
-<div class="container">
-    <div class="objective active">
-        <div class="title" style="color:#60A5FA;">📥 Collecte intelligente des données</div>
-        <div class="desc">Centralisation et structuration des informations étudiantes.</div>
+obj_html = '<div class="obj-row">'
+for num, title, desc, color in objectifs:
+    obj_html += f"""
+    <div class="obj" style="--accent:{color};">
+        <div class="obj-num">{num}</div>
+        <div class="obj-title">{title}</div>
+        <div class="obj-desc">{desc}</div>
     </div>
-
-    <div class="objective">
-        <div class="title" style="color:#4ADE80;">📈 Analyse comportementale</div>
-        <div class="desc">Étude des performances et des habitudes académiques.</div>
-    </div>
-
-    <div class="objective">
-        <div class="title" style="color:#C084FC;">🧠 Identification des facteurs de réussite</div>
-        <div class="desc">Détection automatique des variables influentes.</div>
-    </div>
-
-    <div class="objective">
-        <div class="title" style="color:#F87171;">🤖 Prédiction des performances</div>
-        <div class="desc">Utilisation de modèles IA pour anticiper les résultats.</div>
-    </div>
-
-    <div class="objective">
-        <div class="title" style="color:#FB923C;">📑 Rapports intelligents</div>
-        <div class="desc">Génération d'insights décisionnels automatisés.</div>
-    </div>
-</div>
-
-<script>
-let index = 0;
-const items = document.querySelectorAll(".objective");
-setInterval(() => {
-    items[index].classList.remove("active");
-    index = (index + 1) % items.length;
-    items[index].classList.add("active");
-}, 3000);
-</script>
-""", height=140)
-
-st.divider()
+    """
+obj_html += "</div>"
+st.markdown(obj_html, unsafe_allow_html=True)
 
 
 # ==========================================================
-# KPI CARDS
+# KPI
 # ==========================================================
-st.markdown("## 🌍 Indicateurs globaux")
+section_title("📊", "Indicateurs globaux")
 
 nb_etudiants = len(df)
 moyenne_gen = round(df["moyenne"].mean(), 2)
 stress_moy = round(df["stress"].mean(), 2)
 heures_moy = round(df["heures_etude"].mean(), 2)
 
-col1, col2, col3, col4 = st.columns(4)
+kpis = [
+    ("Étudiants enregistrés", f"{nb_etudiants}", ACCENT, 100),
+    ("Moyenne générale", f"{moyenne_gen}", TEAL, min(moyenne_gen / 20 * 100, 100)),
+    ("Stress moyen", f"{stress_moy}", CORAL, min(stress_moy / 10 * 100, 100)),
+    ("Heures d'étude moyennes", f"{heures_moy}", AMBER, min(heures_moy / 8 * 100, 100)),
+]
 
-with col1:
-    st.markdown(f"""
-    <div class="kpi-card">
-        <div class="kpi-icon">👨‍🎓</div>
-        <div class="kpi-number">{nb_etudiants}</div>
-        <div class="kpi-label">Étudiants enregistrés</div>
+kpi_html = '<div class="kpi-row">'
+for label, value, color, pct in kpis:
+    kpi_html += f"""
+    <div class="kpi">
+        <div class="kpi-label">{label}</div>
+        <div class="kpi-value">{value}</div>
+        <div class="kpi-bar"><span style="width:{pct}%; background:{color};"></span></div>
     </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown(f"""
-    <div class="kpi-card">
-        <div class="kpi-icon">🎓</div>
-        <div class="kpi-number">{moyenne_gen}</div>
-        <div class="kpi-label">Moyenne générale</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
-    st.markdown(f"""
-    <div class="kpi-card">
-        <div class="kpi-icon">😰</div>
-        <div class="kpi-number">{stress_moy}</div>
-        <div class="kpi-label">Stress moyen</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col4:
-    st.markdown(f"""
-    <div class="kpi-card">
-        <div class="kpi-icon">📚</div>
-        <div class="kpi-number">{heures_moy}</div>
-        <div class="kpi-label">Heures d'étude moyennes</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.divider()
+    """
+kpi_html += "</div>"
+st.markdown(kpi_html, unsafe_allow_html=True)
 
 
 # ==========================================================
-# INSIGHTS INTELLIGENTS
+# INSIGHTS AUTOMATIQUES
 # ==========================================================
-st.markdown("## 🧠 Insights automatiques")
+section_title("🧠", "Insights automatiques")
 
 best = df.groupby("filiere")["moyenne"].mean().idxmax()
 worst = df.groupby("filiere")["moyenne"].mean().idxmin()
@@ -368,76 +418,57 @@ stress_high = df.groupby("filiere")["stress"].mean().idxmax()
 study_high = df.groupby("filiere")["heures_etude"].mean().idxmax()
 motivation_high = df.groupby("filiere")["motivation"].mean().idxmax()
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.success(f"🏆 Meilleure filière : **{best}**")
-with col2:
-    st.error(f"📉 Filière la moins performante : **{worst}**")
-with col3:
-    st.info(f"🏫 Nombre total de filières : **{df['filiere'].nunique()}**")
+insights = [
+    ("Meilleure filière", best, TEAL),
+    ("Filière la moins performante", worst, CORAL),
+    ("Nombre total de filières", str(df["filiere"].nunique()), ACCENT),
+    ("Filière la plus stressée", stress_high, AMBER),
+    ("Filière la plus travailleuse", study_high, ACCENT),
+    ("Filière la plus motivée", motivation_high, TEAL),
+]
 
-st.markdown("")
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.warning(f"😰 Filière la plus stressée : **{stress_high}**")
-with col2:
-    st.info(f"📚 Filière la plus travailleuse : **{study_high}**")
-with col3:
-    st.success(f"🔥 Filière la plus motivée : **{motivation_high}**")
-
-st.divider()
+cols = st.columns(3)
+for i, (label, value, color) in enumerate(insights):
+    with cols[i % 3]:
+        st.markdown(f"""
+        <div class="panel" style="margin-bottom:12px;">
+            <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
+            <div style="font-size:16px; font-weight:600; color:{color}; margin-top:6px;">{value}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # ==========================================================
 # PERFORMANCE GLOBALE
 # ==========================================================
-st.markdown("## 📈 Performance académique globale")
+section_title("📈", "Performance académique globale")
 
 pass_rate = (df["moyenne"] >= 10).mean() * 100
 fail_rate = 100 - pass_rate
 
 col1, col2 = st.columns(2)
-
 with col1:
     st.markdown(f"""
-    <div class="glass-card" style="text-align:center;">
-        <div style="font-size:18px; color:#94A3B8; font-weight:600;">
-            🎯 Taux de réussite
-        </div>
-        <div style="font-size:42px; color:#4ADE80; font-weight:900; margin-top:10px;">
-            {pass_rate:.1f}%
-        </div>
+    <div class="panel metric-big">
+        <div class="metric-label">Taux de réussite</div>
+        <div class="metric-value" style="color:{TEAL};">{pass_rate:.1f}%</div>
     </div>
     """, unsafe_allow_html=True)
-
 with col2:
     st.markdown(f"""
-    <div class="glass-card" style="text-align:center;">
-        <div style="font-size:18px; color:#94A3B8; font-weight:600;">
-            ⚠️ Taux d'échec
-        </div>
-        <div style="font-size:42px; color:#F87171; font-weight:900; margin-top:10px;">
-            {fail_rate:.1f}%
-        </div>
+    <div class="panel metric-big">
+        <div class="metric-label">Taux d'échec</div>
+        <div class="metric-value" style="color:{CORAL};">{fail_rate:.1f}%</div>
     </div>
     """, unsafe_allow_html=True)
-
-st.divider()
 
 
 # ==========================================================
 # TOP ÉTUDIANTS
 # ==========================================================
-st.markdown("## 🏆 Top 10 des étudiants")
+section_title("🏆", "Top 10 des étudiants")
 
 top_students = df.sort_values("moyenne", ascending=False).head(10)
-
-st.markdown("""
-<div class="glass-card">
-    <h4 style="margin-top:0;">🌟 Excellence académique</h4>
-</div>
-""", unsafe_allow_html=True)
 
 st.dataframe(
     top_students[[
@@ -446,269 +477,199 @@ st.dataframe(
         "stress", "concentration", "motivation", "moyenne", "credits",
     ]],
     use_container_width=True,
-    height=420,
+    height=380,
 )
-
-st.divider()
 
 
 # ==========================================================
 # DISTRIBUTION DES MOYENNES
 # ==========================================================
-st.markdown("## 📊 Distribution des performances")
+section_title("📊", "Distribution des performances")
 
 fig_distribution = px.histogram(
-    df,
-    x="moyenne",
-    nbins=20,
+    df, x="moyenne", nbins=20,
     title="Répartition des moyennes étudiantes",
     marginal="box",
 )
-fig_distribution.update_layout(template="plotly_dark", title_x=0.5, height=500)
-st.plotly_chart(fig_distribution, use_container_width=True)
-
-st.divider()
+st.plotly_chart(style_chart(fig_distribution, 420), use_container_width=True)
 
 
 # ==========================================================
 # PERFORMANCE PAR FILIÈRE
 # ==========================================================
-st.markdown("## 🏫 Performance moyenne par filière")
+section_title("🏫", "Performance moyenne par filière")
 
 mean_by_filiere = df.groupby("filiere")["moyenne"].mean().reset_index()
-
 fig_filiere = px.bar(
-    mean_by_filiere,
-    x="filiere",
-    y="moyenne",
+    mean_by_filiere, x="filiere", y="moyenne",
     title="Moyenne académique selon la filière",
     text_auto=".2f",
 )
-fig_filiere.update_layout(template="plotly_dark", title_x=0.5, height=500)
-st.plotly_chart(fig_filiere, use_container_width=True)
-
-st.divider()
+st.plotly_chart(style_chart(fig_filiere, 420), use_container_width=True)
 
 
 # ==========================================================
 # FACTEURS D'IMPACT
 # ==========================================================
-st.markdown("## 📈 Facteurs influençant la réussite")
+section_title("📉", "Facteurs influençant la réussite")
 
 correlation = df.select_dtypes(include="number").corr()["moyenne"].sort_values()
-
 fig_corr = px.bar(correlation, title="Corrélation des variables avec la moyenne")
-fig_corr.update_layout(template="plotly_dark", title_x=0.5, height=600)
-st.plotly_chart(fig_corr, use_container_width=True)
-
-st.divider()
+st.plotly_chart(style_chart(fig_corr, 520), use_container_width=True)
 
 
 # ==========================================================
 # HEURES D'ÉTUDE VS MOYENNE
 # ==========================================================
-st.markdown("## 📚 Relation entre étude et performance")
+section_title("📚", "Relation entre étude et performance")
 
 fig_scatter = px.scatter(
-    df,
-    x="heures_etude",
-    y="moyenne",
-    color="filiere",
-    size="motivation",
-    hover_name="nom",
-    title="Heures d'étude et moyenne académique",
+    df, x="heures_etude", y="moyenne", color="filiere", size="motivation",
+    hover_name="nom", title="Heures d'étude et moyenne académique",
 )
-fig_scatter.update_layout(template="plotly_dark", title_x=0.5, height=600)
-st.plotly_chart(fig_scatter, use_container_width=True)
-
-st.divider()
+st.plotly_chart(style_chart(fig_scatter, 520), use_container_width=True)
 
 
 # ==========================================================
 # STRESS VS PERFORMANCE
 # ==========================================================
-st.markdown("## 😰 Impact du stress sur les résultats")
+section_title("😰", "Impact du stress sur les résultats")
 
 fig_stress = px.box(df, x="stress", y="moyenne", title="Influence du niveau de stress")
-fig_stress.update_layout(template="plotly_dark", title_x=0.5, height=550)
-st.plotly_chart(fig_stress, use_container_width=True)
-
-st.divider()
+st.plotly_chart(style_chart(fig_stress, 460), use_container_width=True)
 
 
 # ==========================================================
 # PROFIL ÉTUDIANT IDÉAL
 # ==========================================================
-st.markdown("## 🌟 Profil étudiant idéal")
+section_title("🌟", "Profil étudiant idéal")
 
 best_student = df.sort_values("moyenne", ascending=False).iloc[0]
 
 col1, col2 = st.columns([1, 2])
-
 with col1:
     st.markdown(f"""
-    <div class="glass-card" style="text-align:center;">
-        <div style="font-size:60px;">🏆</div>
-        <div style="font-size:24px; font-weight:900; color:#4ADE80;">
-            {best_student['moyenne']:.2f}/20
-        </div>
-        <div style="color:#94A3B8; margin-top:8px;">
-            Meilleure moyenne observée
+    <div class="panel" style="text-align:center; height:100%;">
+        <div style="font-size:12px; color:{TEXT_SECONDARY};">Meilleure moyenne observée</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:36px; font-weight:600; color:{TEAL}; margin-top:10px;">
+            {best_student['moyenne']:.2f}<span style="font-size:16px; color:{TEXT_SECONDARY};">/20</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
     st.markdown(f"""
-    <div class="glass-card">
-        <h3 style="margin-top:0;">👨‍🎓 {best_student['nom']}</h3>
-        <hr>
-        <p><b>📚 Heures d'étude :</b> {best_student['heures_etude']} h/jour</p>
-        <p><b>🔥 Motivation :</b> {best_student['motivation']}/10</p>
-        <p><b>🧠 Concentration :</b> {best_student['concentration']}/10</p>
-        <p><b>😴 Sommeil :</b> {best_student['sommeil']} heures</p>
-        <p><b>🏃 Activité sportive :</b> {best_student['sport']}</p>
-        <p><b>🎯 Régularité :</b> {best_student['regularite']}</p>
+    <div class="panel">
+        <div style="font-size:15px; font-weight:600; margin-bottom:6px;">{best_student['nom']}</div>
+        <div class="spec-list">
+            <div class="spec-row"><span class="k">Heures d'étude</span><span class="v">{best_student['heures_etude']} h/jour</span></div>
+            <div class="spec-row"><span class="k">Motivation</span><span class="v">{best_student['motivation']}/10</span></div>
+            <div class="spec-row"><span class="k">Concentration</span><span class="v">{best_student['concentration']}/10</span></div>
+            <div class="spec-row"><span class="k">Sommeil</span><span class="v">{best_student['sommeil']} h</span></div>
+            <div class="spec-row"><span class="k">Activité sportive</span><span class="v">{best_student['sport']}</span></div>
+            <div class="spec-row"><span class="k">Régularité</span><span class="v">{best_student['regularite']}</span></div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
-
-st.divider()
 
 
 # ==========================================================
 # RECOMMANDATIONS IA
 # ==========================================================
-st.markdown("## 🤖 Assistant d'aide à la décision")
+section_title("🤖", "Assistant d'aide à la décision")
 
 recommandations = []
 
 if df["stress"].mean() > 6:
     recommandations.append((
-        "⚠️", "#F87171",
+        "ALERTE", CORAL,
         "Le niveau de stress global est élevé. "
         "Il est conseillé de renforcer l'accompagnement psychologique.",
     ))
 
 if df["heures_etude"].mean() < 3:
     recommandations.append((
-        "📚", "#FB923C",
+        "VIGILANCE", AMBER,
         "Le temps moyen d'étude reste insuffisant. "
         "Des séances de tutorat pourraient être envisagées.",
     ))
 
 if df["motivation"].mean() > 7:
     recommandations.append((
-        "🔥", "#4ADE80",
+        "POSITIF", TEAL,
         "La motivation générale est excellente et constitue "
         "un levier important de réussite.",
     ))
 
 if df["sommeil"].mean() < 6:
     recommandations.append((
-        "😴", "#A78BFA",
+        "VIGILANCE", PURPLE,
         "Le temps de sommeil moyen semble faible. "
         "Une meilleure hygiène de vie pourrait améliorer les performances.",
     ))
 
-for icon, color, text in recommandations:
+for tag, color, text in recommandations:
     st.markdown(f"""
-    <div class="glass-card" style="border-left:6px solid {color}; margin-bottom:15px;">
-        <div style="font-size:16px; color:#E2E8F0; font-weight:600;">
-            {icon} {text}
-        </div>
+    <div class="reco" style="--c:{color};">
+        <span class="tag">{tag}</span>
+        <span>{text}</span>
     </div>
     """, unsafe_allow_html=True)
-
-st.divider()
 
 
 # ==========================================================
 # PLAN D'ACTION
 # ==========================================================
-st.markdown("## 🚀 Plan d'amélioration recommandé")
+section_title("🚀", "Plan d'amélioration recommandé")
 
 actions = [
-    "📚 Augmenter le temps moyen consacré aux études.",
-    "🧠 Développer des stratégies de gestion du stress.",
-    "🎯 Renforcer la régularité académique.",
-    "😴 Encourager un meilleur équilibre sommeil/travail.",
-    "🏃 Favoriser les activités physiques et sportives.",
+    "Augmenter le temps moyen consacré aux études.",
+    "Développer des stratégies de gestion du stress.",
+    "Renforcer la régularité académique.",
+    "Encourager un meilleur équilibre sommeil/travail.",
+    "Favoriser les activités physiques et sportives.",
 ]
 
-for action in actions:
+for i, action in enumerate(actions, start=1):
     st.markdown(f"""
-    <div style="
-        background: rgba(30,35,48,.75);
-        border-radius: 16px;
-        padding: 14px 18px;
-        margin-bottom: 10px;
-        border: 1px solid rgba(255,255,255,.08);
-        box-shadow: 0 4px 12px rgba(0,0,0,.25);
-        color: #E2E8F0;
-    ">
-        {action}
+    <div class="action-row">
+        <span class="idx">{i:02d}</span>
+        <span>{action}</span>
     </div>
     """, unsafe_allow_html=True)
 
-st.divider()
+
+# ==========================================================
+# RÉSUMÉ GLOBAL
+# ==========================================================
+section_title("📋", "Résumé global")
+
+summary = [
+    ("Âge moyen", f"{df['age'].mean():.1f} ans"),
+    ("Crédits moyens", f"{df['credits'].mean():.1f}"),
+    ("Motivation moyenne", f"{df['motivation'].mean():.1f}/10"),
+]
+
+cols = st.columns(3)
+for i, (label, value) in enumerate(summary):
+    with cols[i]:
+        st.markdown(f"""
+        <div class="panel" style="text-align:center;">
+            <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; margin-top:8px;">{value}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # ==========================================================
-# STATISTIQUES COMPLÉMENTAIRES
+# PIED DE PAGE (léger, non dupliqué)
 # ==========================================================
-st.markdown("## 📋 Résumé global")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.metric("Âge moyen", f"{df['age'].mean():.1f} ans")
-
-with col2:
-    st.metric("Crédits moyens", f"{df['credits'].mean():.1f}")
-
-with col3:
-    st.metric("Motivation moyenne", f"{df['motivation'].mean():.1f}/10")
-
-st.divider()
-
-
-# ==========================================================
-# FOOTER PREMIUM STYLE LMS
-# ==========================================================
-components.html("""
-<div style="
-    margin-top: 40px;
-    padding: 30px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, #0B0E14, #151923);
-    color: white;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,.35);
-    border: 1px solid rgba(255,255,255,.08);
-">
-    <div style="font-size:24px; font-weight:900; margin-bottom:10px;">
-        🎓 SmartStudent Analytics
-    </div>
-
-    <div style="color:#94A3B8; font-size:14px; max-width:700px; margin:auto; line-height:1.8;">
-        Plateforme intelligente d'analyse des performances académiques
-        basée sur la Data Science, la visualisation interactive et
-        l'intelligence artificielle prédictive.
-    </div>
-
-    <div style="
-        margin-top: 18px;
-        display: inline-block;
-        padding: 8px 18px;
-        border-radius: 999px;
-        background: rgba(99,102,241,.18);
-        border: 1px solid rgba(255,255,255,.12);
-        color: #C7D2FE;
-    ">
-        AI • Data Science • Machine Learning • Analytics
-    </div>
+st.markdown(f"""
+<div class="app-footer">
+    <span>SmartStudent Analytics — Data Science · Machine Learning · Analytics</span>
+    <span>{nb_etudiants} étudiants suivis</span>
 </div>
-""", height=220)
+""", unsafe_allow_html=True)
 
 st.info(
     "⬅️ Utilisez le menu latéral pour remplir le formulaire "
