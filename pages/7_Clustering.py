@@ -272,9 +272,9 @@ for profil in df["profil"].unique():
 
     subset = df[df["profil"] == profil]
 
-    st.write("📊 Moyenne :", round(subset["moyenne"].mean(), 2))
-    st.write("😰 Stress moyen:", round(subset["stress"].mean(), 2))
-    st.write("📚 Heure d'étude moyenne :", round(subset["heures_etude"].mean(), 2))
-    st.write("👥 Effectif :", len(subset))
+    st.write(" Moyenne :", round(subset["moyenne"].mean(), 2))
+    st.write(" Stress moyen:", round(subset["stress"].mean(), 2))
+    st.write(" Heure d'étude moyenne :", round(subset["heures_etude"].mean(), 2))
+    st.write(" Effectif :", len(subset))
 
 st.divider()
