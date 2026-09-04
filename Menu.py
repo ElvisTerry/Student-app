@@ -28,10 +28,50 @@ PURPLE = "#B08CF0"
 
 CHART_COLORWAY = [ACCENT, TEAL, AMBER, CORAL, PURPLE, "#5AB7E8"]
 
+
+def render_html(html: str):
+    """
+    Affiche du HTML via st.markdown en évitant le bug classique de Streamlit :
+    si une ligne commence par 4 espaces ou plus, le parseur Markdown la
+    traite comme un bloc de code et affiche les balises en texte brut au
+    lieu de les interpréter. On "dé-indente" donc chaque ligne avant envoi.
+    """
+    lines = [line.strip() for line in html.strip("\n").splitlines()]
+    st.markdown("\n".join(lines), unsafe_allow_html=True)
+
+
+def style_chart(fig, height=420):
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color=TEXT_SECONDARY, size=12),
+        title_font=dict(family="Inter", size=14, color=TEXT_PRIMARY),
+        title_x=0.0,
+        height=height,
+        margin=dict(t=50, l=10, r=10, b=10),
+        colorway=CHART_COLORWAY,
+        legend=dict(bgcolor="rgba(0,0,0,0)"),
+    )
+    fig.update_xaxes(gridcolor=BORDER, zerolinecolor=BORDER)
+    fig.update_yaxes(gridcolor=BORDER, zerolinecolor=BORDER)
+    return fig
+
+
+def section_title(icon: str, label: str):
+    render_html(f"""
+    <div class="section-title">
+        <span class="icon">{icon}</span>
+        <span class="label">{label}</span>
+        <span class="rule"></span>
+    </div>
+    """)
+
+
 # ==========================================================
 # STYLE GLOBAL — THÈME SOMBRE, TERMINAL D'ANALYSE
 # ==========================================================
-st.markdown(f"""
+render_html(f"""
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -57,7 +97,7 @@ h1, h2, h3 {{
     color: {TEXT_PRIMARY} !important;
 }}
 
-/* ---------- En-tête d'application ---------- */
+/* En-tête d'application */
 .app-header {{
     display: flex;
     align-items: center;
@@ -105,6 +145,7 @@ h1, h2, h3 {{
     border: 1px solid {BORDER};
     padding: 6px 12px;
     border-radius: 999px;
+    white-space: nowrap;
 }}
 .app-header .status .dot {{
     width: 6px;
@@ -114,7 +155,7 @@ h1, h2, h3 {{
     box-shadow: 0 0 0 3px rgba(63,215,184,.15);
 }}
 
-/* ---------- Titres de section ---------- */
+/* Titres de section */
 .section-title {{
     display: flex;
     align-items: baseline;
@@ -133,7 +174,7 @@ h1, h2, h3 {{
     background: {BORDER};
 }}
 
-/* ---------- Cartes génériques (bordure fine, pas de "glass") ---------- */
+/* Cartes génériques (bordure fine) */
 .panel {{
     background: {SURFACE};
     border: 1px solid {BORDER};
@@ -142,8 +183,12 @@ h1, h2, h3 {{
     color: {TEXT_PRIMARY};
 }}
 
-/* ---------- KPI ---------- */
-.kpi-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }}
+/* KPI */
+.kpi-row {{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}}
 .kpi {{
     background: {SURFACE};
     border: 1px solid {BORDER};
@@ -168,14 +213,22 @@ h1, h2, h3 {{
     background: {BORDER};
     overflow: hidden;
 }}
-.kpi .kpi-bar span {{ display: block; height: 100%; border-radius: 3px; }}
+.kpi .kpi-bar span {{
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+}}
 
-/* ---------- Bandeau objectifs (séquence 01-05, statique) ---------- */
-.obj-row {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }}
+/* Bandeau objectifs (séquence 01-05, statique) */
+.obj-row {{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}}
 .obj {{
     background: {SURFACE};
     border: 1px solid {BORDER};
-    border-left: 2px solid var(--accent, #6C8EF5);
+    border-left: 2px solid var(--accent, {ACCENT});
     border-radius: 10px;
     padding: 14px 16px;
 }}
@@ -198,7 +251,7 @@ h1, h2, h3 {{
     line-height: 1.5;
 }}
 
-/* ---------- Métriques doubles (réussite / échec) ---------- */
+/* Métriques doubles (réussite / échec) */
 .metric-big {{ text-align: left; }}
 .metric-big .metric-label {{ font-size: 12.5px; color: {TEXT_SECONDARY}; }}
 .metric-big .metric-value {{
@@ -208,7 +261,7 @@ h1, h2, h3 {{
     margin-top: 8px;
 }}
 
-/* ---------- Fiche profil ---------- */
+/* Fiche profil */
 .spec-list {{ margin-top: 4px; }}
 .spec-row {{
     display: flex;
@@ -221,7 +274,7 @@ h1, h2, h3 {{
 .spec-row .k {{ color: {TEXT_SECONDARY}; }}
 .spec-row .v {{ color: {TEXT_PRIMARY}; font-family: 'IBM Plex Mono', monospace; }}
 
-/* ---------- Recommandations & actions ---------- */
+/* Recommandations & actions */
 .reco {{
     display: flex;
     gap: 12px;
@@ -263,7 +316,7 @@ h1, h2, h3 {{
     width: 18px;
 }}
 
-/* ---------- Footer ---------- */
+/* Footer */
 .app-footer {{
     margin-top: 36px;
     padding: 16px 4px 4px 4px;
@@ -273,9 +326,11 @@ h1, h2, h3 {{
     align-items: center;
     font-size: 12px;
     color: {TEXT_SECONDARY};
+    flex-wrap: wrap;
+    gap: 6px;
 }}
 
-/* ---------- Table & alertes Streamlit ---------- */
+/* Table & alertes Streamlit */
 [data-testid="stDataFrame"] {{
     border-radius: 12px;
     overflow: hidden;
@@ -284,36 +339,19 @@ h1, h2, h3 {{
 .stSuccess, .stInfo, .stWarning, .stError {{ border-radius: 10px !important; }}
 hr {{ border-color: {BORDER} !important; margin: 26px 0 !important; }}
 
+/* Responsive : évite le débordement sur mobile */
+@media (max-width: 900px) {{
+    .kpi-row {{ grid-template-columns: repeat(2, 1fr); }}
+    .obj-row {{ grid-template-columns: repeat(2, 1fr); }}
+    .app-header {{ flex-wrap: wrap; gap: 12px; }}
+}}
+@media (max-width: 520px) {{
+    .kpi-row {{ grid-template-columns: 1fr; }}
+    .obj-row {{ grid-template-columns: 1fr; }}
+}}
+
 </style>
-""", unsafe_allow_html=True)
-
-
-def section_title(icon: str, label: str):
-    st.markdown(f"""
-    <div class="section-title">
-        <span class="icon">{icon}</span>
-        <span class="label">{label}</span>
-        <span class="rule"></span>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-def style_chart(fig, height=420):
-    fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter", color=TEXT_SECONDARY, size=12),
-        title_font=dict(family="Inter", size=14, color=TEXT_PRIMARY),
-        title_x=0.0,
-        height=height,
-        margin=dict(t=50, l=10, r=10, b=10),
-        colorway=CHART_COLORWAY,
-        legend=dict(bgcolor="rgba(0,0,0,0)"),
-    )
-    fig.update_xaxes(gridcolor=BORDER, zerolinecolor=BORDER)
-    fig.update_yaxes(gridcolor=BORDER, zerolinecolor=BORDER)
-    return fig
+""")
 
 
 # ==========================================================
@@ -337,7 +375,7 @@ except Exception:
 # ==========================================================
 # EN-TÊTE (une seule fois)
 # ==========================================================
-st.markdown("""
+render_html("""
 <div class="app-header">
     <div class="brand">
         <div class="brand-mark">🎓</div>
@@ -348,7 +386,7 @@ st.markdown("""
     </div>
     <div class="status"><span class="dot"></span>Données synchronisées</div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 
 # ==========================================================
@@ -364,17 +402,17 @@ objectifs = [
     ("05", "Rapports intelligents", "Génération d'insights décisionnels automatisés.", AMBER),
 ]
 
-obj_html = '<div class="obj-row">'
+obj_parts = ['<div class="obj-row">']
 for num, title, desc, color in objectifs:
-    obj_html += f"""
-    <div class="obj" style="--accent:{color};">
-        <div class="obj-num">{num}</div>
-        <div class="obj-title">{title}</div>
-        <div class="obj-desc">{desc}</div>
-    </div>
-    """
-obj_html += "</div>"
-st.markdown(obj_html, unsafe_allow_html=True)
+    obj_parts.append(
+        f'<div class="obj" style="--accent:{color};">'
+        f'<div class="obj-num">{num}</div>'
+        f'<div class="obj-title">{title}</div>'
+        f'<div class="obj-desc">{desc}</div>'
+        f'</div>'
+    )
+obj_parts.append("</div>")
+render_html("".join(obj_parts))
 
 
 # ==========================================================
@@ -394,17 +432,17 @@ kpis = [
     ("Heures d'étude moyennes", f"{heures_moy}", AMBER, min(heures_moy / 8 * 100, 100)),
 ]
 
-kpi_html = '<div class="kpi-row">'
+kpi_parts = ['<div class="kpi-row">']
 for label, value, color, pct in kpis:
-    kpi_html += f"""
-    <div class="kpi">
-        <div class="kpi-label">{label}</div>
-        <div class="kpi-value">{value}</div>
-        <div class="kpi-bar"><span style="width:{pct}%; background:{color};"></span></div>
-    </div>
-    """
-kpi_html += "</div>"
-st.markdown(kpi_html, unsafe_allow_html=True)
+    kpi_parts.append(
+        f'<div class="kpi">'
+        f'<div class="kpi-label">{label}</div>'
+        f'<div class="kpi-value">{value}</div>'
+        f'<div class="kpi-bar"><span style="width:{pct}%; background:{color};"></span></div>'
+        f'</div>'
+    )
+kpi_parts.append("</div>")
+render_html("".join(kpi_parts))
 
 
 # ==========================================================
@@ -430,12 +468,12 @@ insights = [
 cols = st.columns(3)
 for i, (label, value, color) in enumerate(insights):
     with cols[i % 3]:
-        st.markdown(f"""
+        render_html(f"""
         <div class="panel" style="margin-bottom:12px;">
             <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
             <div style="font-size:16px; font-weight:600; color:{color}; margin-top:6px;">{value}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 
 # ==========================================================
@@ -448,19 +486,19 @@ fail_rate = 100 - pass_rate
 
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown(f"""
+    render_html(f"""
     <div class="panel metric-big">
         <div class="metric-label">Taux de réussite</div>
         <div class="metric-value" style="color:{TEAL};">{pass_rate:.1f}%</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 with col2:
-    st.markdown(f"""
+    render_html(f"""
     <div class="panel metric-big">
         <div class="metric-label">Taux d'échec</div>
         <div class="metric-value" style="color:{CORAL};">{fail_rate:.1f}%</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 
 # ==========================================================
@@ -548,17 +586,17 @@ best_student = df.sort_values("moyenne", ascending=False).iloc[0]
 
 col1, col2 = st.columns([1, 2])
 with col1:
-    st.markdown(f"""
+    render_html(f"""
     <div class="panel" style="text-align:center; height:100%;">
         <div style="font-size:12px; color:{TEXT_SECONDARY};">Meilleure moyenne observée</div>
         <div style="font-family:'IBM Plex Mono',monospace; font-size:36px; font-weight:600; color:{TEAL}; margin-top:10px;">
             {best_student['moyenne']:.2f}<span style="font-size:16px; color:{TEXT_SECONDARY};">/20</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 with col2:
-    st.markdown(f"""
+    render_html(f"""
     <div class="panel">
         <div style="font-size:15px; font-weight:600; margin-bottom:6px;">{best_student['nom']}</div>
         <div class="spec-list">
@@ -570,7 +608,7 @@ with col2:
             <div class="spec-row"><span class="k">Régularité</span><span class="v">{best_student['regularite']}</span></div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 
 # ==========================================================
@@ -609,12 +647,12 @@ if df["sommeil"].mean() < 6:
     ))
 
 for tag, color, text in recommandations:
-    st.markdown(f"""
+    render_html(f"""
     <div class="reco" style="--c:{color};">
         <span class="tag">{tag}</span>
         <span>{text}</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 
 # ==========================================================
@@ -631,12 +669,12 @@ actions = [
 ]
 
 for i, action in enumerate(actions, start=1):
-    st.markdown(f"""
+    render_html(f"""
     <div class="action-row">
         <span class="idx">{i:02d}</span>
         <span>{action}</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 
 # ==========================================================
@@ -653,25 +691,26 @@ summary = [
 cols = st.columns(3)
 for i, (label, value) in enumerate(summary):
     with cols[i]:
-        st.markdown(f"""
+        render_html(f"""
         <div class="panel" style="text-align:center;">
             <div style="font-size:12px; color:{TEXT_SECONDARY};">{label}</div>
             <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; margin-top:8px;">{value}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 
 # ==========================================================
 # PIED DE PAGE (léger, non dupliqué)
 # ==========================================================
-st.markdown(f"""
+render_html(f"""
 <div class="app-footer">
     <span>SmartStudent Analytics — Data Science · Machine Learning · Analytics</span>
     <span>{nb_etudiants} étudiants suivis</span>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 st.info(
     "⬅️ Utilisez le menu latéral pour remplir le formulaire "
     "et naviguer dans l'application."
 )
+
