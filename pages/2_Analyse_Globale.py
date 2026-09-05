@@ -268,7 +268,7 @@ hr {{ border-color: {BORDER} !important; margin: 26px 0 !important; }}
 render_html("""
 <div class="app-header">
     <div class="brand">
-        <div class="brand-mark">📊</div>
+        <div class="brand-mark">📉</div>
         <div>
             <div class="brand-name">Analyse Globale des Données Étudiantes</div>
             <div class="brand-sub">Exploration complète des tendances, performances et corrélations académiques</div>
