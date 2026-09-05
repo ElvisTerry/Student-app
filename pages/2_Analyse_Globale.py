@@ -332,7 +332,7 @@ st.divider()
 # =========================
 section_title("", "Distributions des moyennes")
 
-fig_hist = px.histogram(df, x="moyenne", nbins=20, marginal="box")
+fig_hist = px.histogram(df, x="moyenne", nbins=20, marginal="box", title="")
 st.plotly_chart(style_chart(fig_hist, 460), use_container_width=True)
 
 st.divider()
