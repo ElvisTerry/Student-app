@@ -2,78 +2,208 @@ import streamlit as st
 import pandas as pd
 import os
 import time
-import streamlit.components.v1 as components
-# =========================
-# CONFIG
-# =========================
+
+# ==========================================================
+# CONFIGURATION PAGE
+# ==========================================================
 st.set_page_config(page_title="SmartStudent Analytics", layout="centered")
 
-components.html("""
-<div style="
-    background: linear-gradient(135deg, #F8FAFC, #EEF2FF);
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid #E5E7EB;
-    text-align: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    margin-bottom: 12px;
-    font-family: Arial, sans-serif;
-">
+# ==========================================================
+# PALETTE / TOKENS — identiques à app.py
+# ==========================================================
+BG = "#0A0B0E"
+SURFACE = "#131418"
+BORDER = "#22242B"
+TEXT_PRIMARY = "#EDEEF0"
+TEXT_SECONDARY = "#888B94"
+ACCENT = "#6C8EF5"
+TEAL = "#3FD7B8"
+AMBER = "#F0B457"
+CORAL = "#F0716E"
+PURPLE = "#B08CF0"
 
-    <div style="
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:12px;
-    ">
 
-        <!-- 🧠 + 📊 ICON (Brain + Analytics fusion) -->
-        <svg width="42" height="42" viewBox="0 0 24 24"
-             fill="none"
-             stroke="#6366F1"
-             stroke-width="2.2"
-             stroke-linecap="round"
-             stroke-linejoin="round">
+def render_html(html: str):
+    """Affiche du HTML sans que Streamlit ne le traite comme un bloc de code
+    (chaque ligne est dé-indentée avant envoi à st.markdown)."""
+    lines = [line.strip() for line in html.strip("\n").splitlines()]
+    st.markdown("\n".join(lines), unsafe_allow_html=True)
 
-            <!-- brain shape -->
-            <path d="M9 3c-2 0-3.5 1.5-3.5 3.5S7 10 7 10"/>
-            <path d="M15 3c2 0 3.5 1.5 3.5 3.5S17 10 17 10"/>
-            <path d="M7 10c-1.5 0-2.5 1-2.5 2.5S6 15 7 15"/>
-            <path d="M17 10c1.5 0 2.5 1 2.5 2.5S18 15 17 15"/>
 
-            <!-- analytics bars -->
-            <line x1="9" y1="18" x2="9" y2="14"/>
-            <line x1="12" y1="18" x2="12" y2="12"/>
-            <line x1="15" y1="18" x2="15" y2="10"/>
+def section_title(icon: str, label: str):
+    render_html(f"""
+    <div class="section-title">
+        <span class="icon">{icon}</span>
+        <span class="label">{label}</span>
+        <span class="rule"></span>
+    </div>
+    """)
 
-        </svg>
 
-        <!-- TITLE -->
-        <div style="
-            font-size:25px;
-            font-weight:800;
-            color:#0F172A;
-            letter-spacing:-0.3px;
-        ">
-            SmartStudent Analytics Forms
+def form_group(label: str):
+    render_html(f'<div class="form-group">{label}</div>')
+
+
+# ==========================================================
+# STYLE GLOBAL — même charte que app.py
+# ==========================================================
+render_html(f"""
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+html, body, [class*="css"] {{
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+}}
+
+.stApp {{
+    background: {BG};
+}}
+
+section[data-testid="stSidebar"] {{
+    background: #0D0E12;
+    border-right: 1px solid {BORDER};
+}}
+
+::-webkit-scrollbar {{ width: 8px; }}
+::-webkit-scrollbar-thumb {{ background: {BORDER}; border-radius: 20px; }}
+
+h1, h2, h3 {{
+    color: {TEXT_PRIMARY} !important;
+}}
+
+/* En-tête */
+.app-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px;
+    border: 1px solid {BORDER};
+    border-radius: 14px;
+    background: {SURFACE};
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+}}
+.app-header .brand {{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}}
+.app-header .brand-mark {{
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, {ACCENT}, {PURPLE});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}}
+.app-header .brand-name {{
+    font-size: 25px;
+    font-weight: 700;
+    color: {TEXT_PRIMARY};
+    letter-spacing: -0.2px;
+}}
+.app-header .brand-sub {{
+    font-size: 17px;
+    color: {TEXT_SECONDARY};
+    margin-top: 2px;
+}}
+
+/* Titres de section */
+.section-title {{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 30px 0 14px 0;
+}}
+.section-title .icon {{ font-size: 20px; opacity: .9; }}
+.section-title .label {{
+    font-size: 20px;
+    font-weight: 600;
+    color: {TEXT_PRIMARY};
+}}
+.section-title .rule {{
+    flex: 1;
+    height: 1px;
+    background: {BORDER};
+}}
+
+/* Sous-titres de groupe (à l'intérieur du formulaire) */
+.form-group {{
+    font-size: 16px;
+    font-weight: 600;
+    color: {ACCENT};
+    margin: 22px 0 10px 0;
+}}
+
+/* Carte du formulaire */
+[data-testid="stForm"] {{
+    background: {SURFACE};
+    border: 1px solid {BORDER};
+    border-radius: 14px;
+    padding: 24px 26px;
+}}
+
+/* Champs de saisie */
+.stTextInput input,
+.stNumberInput input,
+.stSelectbox div[data-baseweb="select"] > div {{
+    background: {BG};
+    border: 1px solid {BORDER} !important;
+    color: {TEXT_PRIMARY};
+    border-radius: 8px;
+}}
+.stSlider [data-baseweb="slider"] > div > div {{
+    background: {ACCENT} !important;
+}}
+label, .stMarkdown p {{
+    color: {TEXT_PRIMARY} !important;
+}}
+
+/* Boutons */
+.stButton button,
+[data-testid="stFormSubmitButton"] button {{
+    background: linear-gradient(135deg, {ACCENT}, {PURPLE});
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 22px;
+}}
+.stButton button:hover,
+[data-testid="stFormSubmitButton"] button:hover {{
+    opacity: .9;
+}}
+
+.stSuccess, .stInfo, .stWarning, .stError {{ border-radius: 10px !important; }}
+hr {{ border-color: {BORDER} !important; margin: 26px 0 !important; }}
+
+</style>
+""")
+
+
+# ==========================================================
+# EN-TÊTE
+# ==========================================================
+render_html("""
+<div class="app-header">
+    <div class="brand">
+        <div class="brand-mark">📝</div>
+        <div>
+            <div class="brand-name">SmartStudent Analytics — Formulaire</div>
+            <div class="brand-sub">Data collection &amp; intelligent student profiling system</div>
         </div>
-
     </div>
-
-    <!-- SUBTITLE -->
-    <div style="
-        font-size:13px;
-        color:#64748B;
-        margin-top:8px;
-    ">
-        Data collection & intelligent student profiling system
-    </div>
-
 </div>
-""", height=140)
+""")
 
 st.divider()
-st.subheader("📑 Formulaire de collecte des données étudiants")
+section_title("", "Formulaire de collecte des données étudiants")
 
 DATA_FILE = "data_students.csv"
 
@@ -82,12 +212,12 @@ DATA_FILE = "data_students.csv"
 # =========================
 with st.form("student_form"):
 
-    st.markdown("### 👤 Identité")
+    form_group("Identité")
 
     prenom = st.text_input("Prénom")
     nom = st.text_input("Nom")
 
-    st.markdown("### 🧾 Informations générales")
+    form_group("Informations générales")
     age = st.number_input("Âge", min_value=15, max_value=60, step=1)
     sexe = st.selectbox("Sexe", ["Masculin", "Féminin"])
 
@@ -100,22 +230,22 @@ with st.form("student_form"):
 
     niveau = st.selectbox("Niveau", ["L1", "L2", "L3", "Master1", "Master2", "PhD"])
 
-    st.markdown("### 📚 Habitudes d'étude")
+    form_group("Habitudes d'étude")
     heures_etude = st.slider("Heures d'étude par jour", 0, 12, 2)
     methode = st.selectbox("Méthode d'apprentissage", ["Seul(e)", "Groupe"])
     regularite = st.slider("Régularité (1 à 10)", 1, 10, 5)
 
-    st.markdown("### 🍎 Mode de vie")
+    form_group("Mode de vie")
     sommeil = st.slider("Heures de sommeil", 0, 12, 6)
     sport = st.selectbox("Activité sportive", ["Oui", "Non"])
     telephone = st.slider("Temps téléphone (heures/jour)", 0, 12, 4)
 
-    st.markdown("### 😰 Bien-être")
+    form_group("Bien-être")
     stress = st.slider("Stress (1 à 10)", 1, 10, 5)
     concentration = st.slider("Concentration (1 à 10)", 1, 10, 5)
     motivation = st.slider("Motivation (1 à 10)", 1, 10, 5)
 
-    st.markdown("### 🎓 Résultats")
+    form_group("Résultats")
     moyenne = st.number_input("Moyenne (/20)", 0.0, 20.0, 10.0)
     credits = st.number_input("Crédits validés", 0, 60, 20)
 
