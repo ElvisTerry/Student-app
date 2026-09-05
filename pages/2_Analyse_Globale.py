@@ -70,11 +70,12 @@ def style_heatmap(fig, height=750):
         title_font=dict(family="Inter", size=16, color=TEXT_PRIMARY),
         title_x=0.0,
         height=height,
-        margin=dict(t=60, l=10, r=10, b=10),
+        margin=dict(t=60, l=0, r=0, b=10),
+        coloraxis_showscale=False,
     )
     fig.update_xaxes(tickfont=dict(size=13))
     fig.update_yaxes(tickfont=dict(size=13))
-    fig.update_traces(textfont_size=13)
+    fig.update_traces(textfont_size=12)
     return fig
 
 
@@ -556,7 +557,7 @@ if st.button("🧮 Statistique par filière"):
 if st.session_state.show_stats:
 
     filiere_selected = st.selectbox(
-        "📌 Choisir une filière",
+        " Choisir une filière",
         df["filiere"].dropna().unique()
     )
 
@@ -565,7 +566,7 @@ if st.session_state.show_stats:
     # =========================
     # KPI FILIERE
     # =========================
-    section_title("", f"Indicateurs de la filière — {filiere_selected}")
+    section_title("", f"Indicateurs de la filière - {filiere_selected}")
 
     kpi_row([
         ("Moyenne", round(df_fil["moyenne"].mean(), 2), TEAL),
@@ -579,7 +580,7 @@ if st.session_state.show_stats:
     # =========================
     # SEMI-CIRCLE SEXE
     # =========================
-    section_title("", f"Analyse de la filière — {filiere_selected}")
+    section_title("", f"Analyse de la filière - {filiere_selected}")
 
     sex_counts = df_fil["sexe"].value_counts().reset_index()
     sex_counts.columns = ["sexe", "count"]
@@ -667,7 +668,7 @@ if st.session_state.show_stats:
     # =========================
     fig4 = px.pie(
         df_fil, names="niveau",
-        title=f"Répartition des niveaux — {filiere_selected}",
+        title=f"Répartition des niveaux - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Set3,
     )
     st.plotly_chart(style_chart(fig4, 460), use_container_width=True)
