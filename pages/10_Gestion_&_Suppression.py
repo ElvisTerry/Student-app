@@ -292,8 +292,3 @@ if confirm:
         except Exception as e:
             st.error(f" Erreur inattendue : {e}")
 
-# =========================
-# FOOTER
-# =========================
-st.divider()
-st.info(" Suppression sécurisée avec gestion d'erreur avancée")
