@@ -354,8 +354,8 @@ section_title("", "Matrice de corrélation")
 corr_matrix = numeric_df.corr()
 
 fig6 = px.imshow(corr_matrix, text_auto=True, color_continuous_scale="RdBu_r")
-fig6.update_layout(height=800, width=1000)
-st.plotly_chart(style_chart(fig6, 550), use_container_width=True)
+fig6.update_layout(height=800, width=700)
+st.plotly_chart(style_chart(fig6, 700), use_container_width=True)
 
 render_html("""
 <div class="ticker-wrapper">
