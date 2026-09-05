@@ -195,8 +195,8 @@ render_html("""
     <div class="brand">
         <div class="brand-mark">📝</div>
         <div>
-            <div class="brand-name">SmartStudent Analytics — Formulaire</div>
-            <div class="brand-sub">Data collection &amp; intelligent student profiling system</div>
+            <div class="brand-name">SmartStudent Analytics - Formulaire</div>
+            <div class="brand-sub">Data collection, intelligent student profiling system</div>
         </div>
     </div>
 </div>
