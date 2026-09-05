@@ -644,21 +644,21 @@ if st.session_state.show_stats:
 
     fig1 = px.bar(
         niveau_group, x="niveau", y="moyenne", color="niveau",
-        title=f"Moyenne par niveau — {filiere_selected}",
+        title=f"Moyenne par niveau - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Set3,
     )
     st.plotly_chart(style_chart(fig1, 420), use_container_width=True)
 
     fig2 = px.bar(
         niveau_group, x="niveau", y="stress", color="niveau",
-        title=f"Stress par niveau — {filiere_selected}",
+        title=f"Stress par niveau - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Pastel,
     )
     st.plotly_chart(style_chart(fig2, 420), use_container_width=True)
 
     fig3 = px.bar(
         niveau_group, x="niveau", y="heures_etude", color="niveau",
-        title=f"Heures d'étude par niveau — {filiere_selected}",
+        title=f"Heures d'étude par niveau - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Bold,
     )
     st.plotly_chart(style_chart(fig3, 420), use_container_width=True)
