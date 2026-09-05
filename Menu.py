@@ -78,7 +78,7 @@ render_html(f"""
 
 html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
-    font-size : 20 px;
+    font-size : 20px;
 }}
 
 .stApp {{
