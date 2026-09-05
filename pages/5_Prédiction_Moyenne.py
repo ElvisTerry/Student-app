@@ -318,13 +318,13 @@ render_html("""
     <div class="step-content">
         <div class="step-line active">Le modèle analyse et exploite toutes les variables de la filière choisie</div>
         <div class="step-line">Ceci étant, les variables exploitées sont entre autres :</div>
-        <div class="step-line">— Habitudes d'étude : heures et régularité</div>
-        <div class="step-line">— Mode de vie : sommeil, téléphone, sport</div>
-        <div class="step-line">— Bien-être : stress, motivation, concentration</div>
-        <div class="step-line">— Profil académique : filière, niveau, sexe, méthode</div>
+        <div class="step-line"> Habitudes d'étude : heures et régularité</div>
+        <div class="step-line"> Mode de vie : sommeil, téléphone, sport</div>
+        <div class="step-line"> Bien-être : stress, motivation, concentration</div>
+        <div class="step-line"> Profil académique : filière, niveau, sexe, méthode</div>
         <div class="step-line">Objectif :</div>
-        <div class="step-line">— prédire la moyenne académique</div>
-        <div class="step-line">— prédire la réussite ou l'échec</div>
+        <div class="step-line"> prédire la moyenne académique</div>
+        <div class="step-line"> prédire la réussite ou l'échec</div>
         <div class="step-line">Algorithme utilisé : Random Forest (robuste et performant)</div>
     </div>
 </div>
