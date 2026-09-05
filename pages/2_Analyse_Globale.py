@@ -354,7 +354,7 @@ section_title("", "Matrice de corrélation")
 corr_matrix = numeric_df.corr()
 
 fig6 = px.imshow(corr_matrix, text_auto=True, color_continuous_scale="RdBu_r")
-fig6.update_layout(height=550, width=750)
+fig6.update_layout(height=800, width=1000)
 st.plotly_chart(style_chart(fig6, 550), use_container_width=True)
 
 render_html("""
@@ -526,7 +526,7 @@ render_html("""
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ===== SESSION STATE =====
+# SESSION STATE 
 if "show_stats" not in st.session_state:
     st.session_state.show_stats = False
 
@@ -537,7 +537,7 @@ if st.button("🧮 Statistique par filière"):
 if st.session_state.show_stats:
 
     filiere_selected = st.selectbox(
-        "📌 Choisir une filière",
+        "Choisir une filière",
         df["filiere"].dropna().unique()
     )
 
@@ -546,7 +546,7 @@ if st.session_state.show_stats:
     # =========================
     # KPI FILIERE
     # =========================
-    section_title("", f"Indicateurs de la filière — {filiere_selected}")
+    section_title("", f"Indicateurs de la filière - {filiere_selected}")
 
     kpi_row([
         ("Moyenne", round(df_fil["moyenne"].mean(), 2), TEAL),
@@ -560,7 +560,7 @@ if st.session_state.show_stats:
     # =========================
     # SEMI-CIRCLE SEXE
     # =========================
-    section_title("", f"Analyse de la filière — {filiere_selected}")
+    section_title("", f"Analyse de la filière - {filiere_selected}")
 
     sex_counts = df_fil["sexe"].value_counts().reset_index()
     sex_counts.columns = ["sexe", "count"]
@@ -585,7 +585,7 @@ if st.session_state.show_stats:
         numeric_df_fil.corr(), text_auto=True,
         color_continuous_scale="RdBu", title="Corrélation des variables",
     )
-    st.plotly_chart(style_chart(fig_corr, 500), use_container_width=True)
+    st.plotly_chart(style_chart(fig_corr, 900), use_container_width=True)
 
     st.divider()
 
@@ -624,7 +624,7 @@ if st.session_state.show_stats:
 
     fig1 = px.bar(
         niveau_group, x="niveau", y="moyenne", color="niveau",
-        title=f"Moyenne par niveau — {filiere_selected}",
+        title=f"Moyenne par niveau - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Set3,
     )
     st.plotly_chart(style_chart(fig1, 420), use_container_width=True)
@@ -638,7 +638,7 @@ if st.session_state.show_stats:
 
     fig3 = px.bar(
         niveau_group, x="niveau", y="heures_etude", color="niveau",
-        title=f"Heures d'étude par niveau — {filiere_selected}",
+        title=f"Heures d'étude par niveau - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Bold,
     )
     st.plotly_chart(style_chart(fig3, 420), use_container_width=True)
@@ -648,7 +648,7 @@ if st.session_state.show_stats:
     # =========================
     fig4 = px.pie(
         df_fil, names="niveau",
-        title=f"Répartition des niveaux — {filiere_selected}",
+        title=f"Répartition des niveaux - {filiere_selected}",
         color_discrete_sequence=px.colors.qualitative.Set3,
     )
     st.plotly_chart(style_chart(fig4, 460), use_container_width=True)
