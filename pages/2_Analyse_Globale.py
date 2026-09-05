@@ -374,7 +374,7 @@ section_title("", "Matrice de corrélation")
 
 corr_matrix = numeric_df.corr()
 
-fig6 = px.imshow(corr_matrix, text_auto=".2f", color_continuous_scale="RdBu_r", aspect="auto")
+fig6 = px.imshow(corr_matrix, text_auto=".2f", color_continuous_scale="RdBu_r", aspect="auto", title="Matrice de corrélation")
 st.plotly_chart(style_heatmap(fig6, 750), use_container_width=True)
 
 render_html("""
