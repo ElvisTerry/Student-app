@@ -22,15 +22,15 @@ Structure de l'application
 
 | Fichier | Page | Rôle |
 |---|---|---|
-| `app.py` |  Accueil | Tableau de bord général : objectifs du projet, indicateurs globaux, top 10 des étudiants, distributions, facteurs de réussite, recommandations automatiques |
-| `page_formulaire.py` |  Formulaire | Saisie et enregistrement d'un nouvel étudiant dans `data_students.csv` |
-| `page_analyse_globale.py` |  Analyse Globale | Statistiques descriptives complètes : histogrammes, répartitions, matrice de corrélation, comparaisons par filière/niveau, analyse intelligente, export CSV |
-| `page_data_explorer.py` |  Data Explorer | Filtrage interactif des étudiants (filière / niveau / sexe) et consultation d'une fiche individuelle |
-| `page_simulation_ia.py` |  Simulation IA | Simulateur "What-If" : prédiction de la moyenne selon des paramètres d'étude modifiables, via un modèle Random Forest entraîné par filière |
-| `page_profil_etudiant.py` |  Profil Étudiant | Auto-évaluation : score de risque académique personnel, radar de profil, recommandations |
-| `page_clustering.py` |  Clustering | Segmentation non supervisée (K-Means) des étudiants en 3 profils selon leurs indicateurs |
-| `page_rapport_ia.py` |  Rapport IA | Génération d'un rapport PDF individuel (profil + diagnostic de risque) |
-| `page_gestion_etudiants.py` |  Gestion | Interface d'administration pour supprimer un enregistrement étudiant |
+| Menu.py |  Accueil | Tableau de bord général : objectifs du projet, indicateurs globaux, top 10 des étudiants, distributions, facteurs de réussite, recommandations automatiques |
+| Formulaire.py |  Formulaire | Saisie et enregistrement d'un nouvel étudiant dans `data_students.csv` |
+| Analyse_Globale.py |  Analyse Globale | Statistiques descriptives complètes : histogrammes, répartitions, matrice de corrélation, comparaisons par filière/niveau, analyse intelligente, export CSV |
+| Analyse_Exploratoire.py |  Data Explorer | Filtrage interactif des étudiants (filière / niveau / sexe) et consultation d'une fiche individuelle |
+| Prediction_Moyenne.py |  Simulation IA | Simulateur "What-If" : prédiction de la moyenne selon des paramètres d'étude modifiables, via un modèle Random Forest entraîné par filière |
+| Profil_&_Risque_Etudiant.py |  Profil Étudiant | Auto-évaluation : score de risque académique personnel, radar de profil, recommandations |
+| Clustering.py |  Clustering | Segmentation non supervisée (K-Means) des étudiants en 3 profils selon leurs indicateurs |
+| Rapport_Etudiant.py |  Rapport IA | Génération d'un rapport PDF individuel (profil + diagnostic de risque) |
+| Gestion_&_Suppression.py |  Gestion | Interface d'administration pour supprimer un enregistrement étudiant |
 
 > Dans Streamlit, la page de niveau racine (`app.py`) sert de page d'accueil ; les autres fichiers doivent être placés dans un dossier `pages/` pour apparaître automatiquement dans le menu latéral de navigation.
 
