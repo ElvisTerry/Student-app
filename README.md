@@ -32,7 +32,7 @@ Structure de l'application
 | Rapport_Etudiant.py |  Rapport IA | Génération d'un rapport PDF individuel (profil + diagnostic de risque) |
 | Gestion_&_Suppression.py |  Gestion | Interface d'administration pour supprimer un enregistrement étudiant |
 
-> Dans Streamlit, la page de niveau racine (`app.py`) sert de page d'accueil ; les autres fichiers doivent être placés dans un dossier `pages/` pour apparaître automatiquement dans le menu latéral de navigation.
+> Dans Streamlit, la page de niveau racine (`Menu.py`) sert de page d'accueil ; les autres fichiers doivent être placés dans un dossier `pages/` pour apparaître automatiquement dans le menu latéral de navigation.
 
 ---
 
