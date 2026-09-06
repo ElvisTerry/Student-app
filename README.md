@@ -87,7 +87,7 @@ Placer les fichiers `page_*.py` dans un dossier `pages/` à la racine du projet 
 
 ```
 mon_projet/
-├── app.py
+├── Menu.py
 ├── data_students.csv        (généré automatiquement)
 └── pages/
     ├── 1_Formulaire.py
