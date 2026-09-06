@@ -83,7 +83,7 @@ pip install streamlit pandas numpy plotly scikit-learn reportlab seaborn matplot
 streamlit run app.py
 ```
 
-Placer les fichiers `page_*.py` dans un dossier `pages/` à la racine du projet pour qu'ils apparaissent dans le menu de navigation Streamlit, par exemple :
+Placer les fichiers dans un dossier `pages/` à la racine du projet pour qu'ils apparaissent dans le menu de navigation Streamlit, par exemple :
 
 ```
 mon_projet/
@@ -100,7 +100,7 @@ mon_projet/
     └── 8_Gestion_Etudiants.py
 ```
 
-(renommer les fichiers avec un préfixe numérique permet de fixer l'ordre d'affichage dans le menu latéral)*
+(renommer les fichiers avec un préfixe numérique permet de fixer l'ordre d'affichage dans le menu latéral)
 
 ---
 
