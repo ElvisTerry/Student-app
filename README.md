@@ -36,7 +36,7 @@ Structure de l'application
 
 ---
 
-## 📊 Données
+Données
 
 Toutes les pages lisent/écrivent le même fichier : **`data_students.csv`**, créé automatiquement à la première soumission du formulaire.
 
@@ -65,7 +65,7 @@ Colonnes utilisées :
 
 Modèles utilisés
 
-- Random Forest Regressor (`page_simulation_ia.py`) — un modèle est entraîné **par filière** (minimum 5 étudiants requis) pour prédire la moyenne à partir des habitudes d'étude, du bien-être et du sexe. La précision est mesurée par la MAE (erreur absolue moyenne).
+- Random Forest Regressor (`page_simulation_ia.py`) — un modèle est entraîné par filière (minimum 5 étudiants requis) pour prédire la moyenne à partir des habitudes d'étude, du bien-être et du sexe. La précision est mesurée par la MAE (erreur absolue moyenne).
 - K-Means (`page_clustering.py`) — segmentation en 3 groupes (Performants / Moyens / À risque) à partir de la moyenne, du stress, des heures d'étude, du sommeil, de la motivation et de la concentration, après normalisation (`StandardScaler`).
 - Score de risque pondéré (`page_profil_etudiant.py`, `page_rapport_ia.py`) — formule non supervisée combinant stress, sommeil et heures d'étude pour classer un étudiant en risque faible / moyen / élevé.
 
